@@ -13,6 +13,7 @@ const ItemDetailPage = ({ user }) => {
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     fetchItem();
