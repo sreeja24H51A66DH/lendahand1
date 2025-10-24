@@ -210,17 +210,25 @@ async def create_item(
     if not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="Only image files are allowed")
     
-    # Upload to Cloudinary
+    # Upload to Cloudinary (or use test mode)
     try:
         contents = await file.read()
-        result = cloudinary.uploader.upload(
-            contents,
-            folder="lend_a_hand/items",
-            public_id=f"{title.replace(' ', '_')}_{uuid.uuid4().hex[:8]}",
-            overwrite=False,
-            resource_type="auto"
-        )
-        image_url = result.get("secure_url")
+        
+        # Check if using test credentials
+        if os.getenv("CLOUDINARY_CLOUD_NAME") == "test_cloud":
+            # Test mode - use placeholder image
+            image_url = f"https://placehold.co/600x400/ff7b54/white?text={title.replace(' ', '+')}"
+            logger.info("Test mode: Using placeholder image")
+        else:
+            # Production mode - upload to Cloudinary
+            result = cloudinary.uploader.upload(
+                contents,
+                folder="lend_a_hand/items",
+                public_id=f"{title.replace(' ', '_')}_{uuid.uuid4().hex[:8]}",
+                overwrite=False,
+                resource_type="auto"
+            )
+            image_url = result.get("secure_url")
     except Exception as e:
         logger.error(f"Cloudinary upload error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to upload image")
