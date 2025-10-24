@@ -6,6 +6,7 @@ import AuthPage from '@/pages/AuthPage';
 import HomePage from '@/pages/HomePage';
 import ItemDetailPage from '@/pages/ItemDetailPage';
 import MyItemsPage from '@/pages/MyItemsPage';
+import MessagesPage from '@/pages/MessagesPage';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
