@@ -49,6 +49,7 @@ function App() {
         <Route path="/" element={user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} />
         <Route path="/item/:id" element={user ? <ItemDetailPage user={user} /> : <Navigate to="/auth" />} />
         <Route path="/my-items" element={user ? <MyItemsPage user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} />
+        <Route path="/messages" element={user ? <MessagesPage user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} />
       </Routes>
     </BrowserRouter>
   );
