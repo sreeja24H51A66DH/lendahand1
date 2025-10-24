@@ -4,7 +4,8 @@ import { API } from '@/App';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ArrowLeft, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
+import ChatBox from '@/components/ChatBox';
 import './ItemDetailPage.css';
 
 const ItemDetailPage = ({ user }) => {
