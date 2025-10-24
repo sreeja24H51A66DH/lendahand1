@@ -328,6 +328,122 @@ async def get_user_items(user_id: str):
     
     return items
 
+# Chat endpoints
+@api_router.post("/messages")
+async def send_message(token: str, msg_data: MessageCreate):
+    user = await get_current_user(token)
+    
+    # Get or create conversation
+    conversation_id = f"{min(user['id'], msg_data.receiver_id)}_{max(user['id'], msg_data.receiver_id)}_{msg_data.item_id}"
+    
+    # Check if conversation exists
+    conversation = await db.conversations.find_one({"id": conversation_id}, {"_id": 0})
+    if not conversation:
+        # Create new conversation
+        conversation_doc = {
+            "id": conversation_id,
+            "item_id": msg_data.item_id,
+            "participants": [user['id'], msg_data.receiver_id],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "last_message_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.conversations.insert_one(conversation_doc)
+    
+    # Create message
+    message = Message(
+        conversation_id=conversation_id,
+        sender_id=user['id'],
+        sender_name=user['name'],
+        message=msg_data.message
+    )
+    
+    message_doc = message.model_dump()
+    message_doc['created_at'] = message_doc['created_at'].isoformat()
+    
+    await db.messages.insert_one(message_doc)
+    
+    # Update conversation last message time
+    await db.conversations.update_one(
+        {"id": conversation_id},
+        {"$set": {"last_message_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"success": True, "message": message.model_dump()}
+
+@api_router.get("/messages/{item_id}/{other_user_id}")
+async def get_messages(item_id: str, other_user_id: str, token: str):
+    user = await get_current_user(token)
+    
+    conversation_id = f"{min(user['id'], other_user_id)}_{max(user['id'], other_user_id)}_{item_id}"
+    
+    messages = await db.messages.find(
+        {"conversation_id": conversation_id},
+        {"_id": 0}
+    ).sort("created_at", 1).to_list(1000)
+    
+    for msg in messages:
+        if isinstance(msg['created_at'], str):
+            msg['created_at'] = datetime.fromisoformat(msg['created_at'])
+    
+    # Mark messages as read
+    await db.messages.update_many(
+        {"conversation_id": conversation_id, "sender_id": other_user_id, "read": False},
+        {"$set": {"read": True}}
+    )
+    
+    return messages
+
+@api_router.get("/conversations")
+async def get_conversations(token: str):
+    user = await get_current_user(token)
+    
+    # Get all conversations for this user
+    conversations = await db.conversations.find(
+        {"participants": user['id']},
+        {"_id": 0}
+    ).sort("last_message_at", -1).to_list(1000)
+    
+    result = []
+    for conv in conversations:
+        # Get the other participant
+        other_user_id = [p for p in conv['participants'] if p != user['id']][0]
+        other_user = await db.users.find_one({"id": other_user_id}, {"_id": 0})
+        
+        # Get item info
+        item = await db.items.find_one({"id": conv['item_id']}, {"_id": 0})
+        
+        # Get last message
+        last_message = await db.messages.find_one(
+            {"conversation_id": conv['id']},
+            {"_id": 0},
+            sort=[("created_at", -1)]
+        )
+        
+        # Count unread messages
+        unread_count = await db.messages.count_documents({
+            "conversation_id": conv['id'],
+            "sender_id": other_user_id,
+            "read": False
+        })
+        
+        result.append({
+            "conversation_id": conv['id'],
+            "item": {
+                "id": item['id'],
+                "title": item['title'],
+                "image_url": item['image_url']
+            },
+            "other_user": {
+                "id": other_user['id'],
+                "name": other_user['name']
+            },
+            "last_message": last_message['message'] if last_message else "",
+            "last_message_at": conv['last_message_at'],
+            "unread_count": unread_count
+        })
+    
+    return result
+
 # Include router
 app.include_router(api_router)
 
