@@ -84,36 +84,46 @@ const ItemDetailPage = ({ user }) => {
             </div>
 
             {!isOwner && (
-              <div className="contact-section" data-testid="contact-section">
-                <h3>Contact Information</h3>
-                <div className="contact-details">
-                  <div className="contact-item">
-                    <Mail className="icon" />
-                    <div>
-                      <h4>Email</h4>
-                      <a href={`mailto:${item.contact_email}`} data-testid="contact-email">
-                        {item.contact_email}
-                      </a>
+              <>
+                <div className="contact-section" data-testid="contact-section">
+                  <h3>Contact Information</h3>
+                  <div className="contact-details">
+                    <div className="contact-item">
+                      <Mail className="icon" />
+                      <div>
+                        <h4>Email</h4>
+                        <a href={`mailto:${item.contact_email}`} data-testid="contact-email">
+                          {item.contact_email}
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                  <div className="contact-item">
-                    <Phone className="icon" />
-                    <div>
-                      <h4>Phone</h4>
-                      <a href={`tel:${item.contact_phone}`} data-testid="contact-phone">
-                        {item.contact_phone}
-                      </a>
+                    <div className="contact-item">
+                      <Phone className="icon" />
+                      <div>
+                        <h4>Phone</h4>
+                        <a href={`tel:${item.contact_phone}`} data-testid="contact-phone">
+                          {item.contact_phone}
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                  <div className="contact-item">
-                    <div className="icon">👤</div>
-                    <div>
-                      <h4>Name</h4>
-                      <p data-testid="contact-name">{item.contact_name}</p>
+                    <div className="contact-item">
+                      <div className="icon">👤</div>
+                      <div>
+                        <h4>Name</h4>
+                        <p data-testid="contact-name">{item.contact_name}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+
+                <Button
+                  className="chat-button"
+                  onClick={() => setShowChat(true)}
+                  data-testid="open-chat-button"
+                >
+                  <MessageCircle className="icon" /> Message Seller
+                </Button>
+              </>
             )}
 
             {isOwner && (
