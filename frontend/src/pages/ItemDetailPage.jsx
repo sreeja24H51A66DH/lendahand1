@@ -134,6 +134,15 @@ const ItemDetailPage = ({ user }) => {
           </div>
         </div>
       </div>
+
+      {showChat && !isOwner && (
+        <ChatBox
+          itemId={item.id}
+          otherUserId={item.user_id}
+          otherUserName={item.contact_name}
+          onClose={() => setShowChat(false)}
+        />
+      )}
     </div>
   );
 };
