@@ -3,19 +3,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('https://customer-assets.emergentagent.com/job_10db6ab5-df62-47c4-a709-2f344b531a47/artifacts/zwuf2qw7_logo%20cet.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #fef3f0 0%, #fff5f2 100%);
   position: relative;
 }
 
 .auth-page::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background-image: url('https://customer-assets.emergentagent.com/job_10db6ab5-df62-47c4-a709-2f344b531a47/artifacts/zwuf2qw7_logo%20cet.jpeg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.08;
+  z-index: 0;
 }
 
 .auth-container {
