@@ -133,6 +133,13 @@ const HomePage = ({ user, onLogout }) => {
           <div className="nav-actions">
             <Button
               variant="outline"
+              onClick={() => navigate('/messages')}
+              data-testid="messages-button"
+            >
+              <MessageCircle className="icon" /> Messages
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => navigate('/my-items')}
               data-testid="my-items-button"
             >
