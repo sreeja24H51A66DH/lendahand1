@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Search, Plus, Package, LogOut, User } from 'lucide-react';
+import { Search, Plus, Package, LogOut, User, MessageCircle } from 'lucide-react';
 import './HomePage.css';
 
 const categories = ['All', 'Lab Items', 'Stationery', 'Clothing', 'Books', 'Electronics', 'Sports Equipment', 'Others'];
